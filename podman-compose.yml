@@ -6,11 +6,8 @@ services:
       # Uncomment the next line if building on Apple Silicon and targeting arm64
       # platforms:
       #   - linux/arm64
-    image: kasper:latest
+    image: localhost/kasper:latest
     container_name: kasper
-    environment:
-      - THECATAPI_KEY=${THECATAPI_KEY:-}
-      - HOST_TYPE=${HOST_TYPE:-}
     ports:
       - "8080:8080"
     restart: unless-stopped
