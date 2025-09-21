@@ -1,0 +1,57 @@
+---
+- name: Install prerequisites (Rocky Linux)
+  ansible.builtin.yum:
+    name:
+      - git
+      - tar
+    state: present
+
+- name: Install Go {{ kasper_go_version }}
+  become: true
+  block:
+    - name: Detect arch
+      ansible.builtin.set_fact:
+        kasper_go_arch: "{{ kasper_go_arch_map[ansible_architecture] | default('amd64') }}"
+    - name: Download Go tarball
+      ansible.builtin.get_url:
+        url: "https://go.dev/dl/go{{ kasper_go_version }}.linux-{{ kasper_go_arch }}.tar.gz"
+        dest: "/tmp/go{{ kasper_go_version }}.linux-{{ kasper_go_arch }}.tar.gz"
+        mode: "0644"
+    - name: Remove existing /usr/local/go
+      ansible.builtin.file:
+        path: /usr/local/go
+        state: absent
+    - name: Extract Go
+      ansible.builtin.unarchive:
+        src: "/tmp/go{{ kasper_go_version }}.linux-{{ kasper_go_arch }}.tar.gz"
+        dest: /usr/local
+        remote_src: true
+
+- name: Build server binary on target
+  environment:
+    PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"
+    GOCACHE: "{{ kasper_app_root }}/.gocache"
+    GOPATH: "{{ kasper_app_root }}/.gopath"
+  block:
+    - name: Sync project files
+      ansible.builtin.copy:
+        src: "{{ kasper_src }}/"
+        dest: "{{ kasper_app_dir }}/"
+        owner: "{{ kasper_user }}"
+        group: "{{ kasper_group }}"
+        mode: preserve
+      notify: Restart kasper
+    - name: Go mod download
+      ansible.builtin.command: go mod download
+      args:
+        chdir: "{{ kasper_app_dir }}"
+    - name: Build
+      ansible.builtin.command: go build -buildvcs=false -o {{ kasper_bin_dir }}/server ./cmd/server
+      args:
+        chdir: "{{ kasper_app_dir }}"
+    - name: Ensure binary ownership
+      ansible.builtin.file:
+        path: "{{ kasper_bin_dir }}/server"
+        owner: root
+        group: root
+        mode: "0755"

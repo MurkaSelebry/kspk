@@ -1,0 +1,51 @@
+---
+- name: Install Podman
+  ansible.builtin.yum:
+    name:
+      - podman
+    state: present
+
+- name: Install podman-compose (via pip)
+  ansible.builtin.yum:
+    name:
+      - python3-pip
+    state: present
+
+- name: Ensure podman-compose installed
+  ansible.builtin.pip:
+    name: podman-compose
+    executable: pip3
+
+- name: Ensure Podman service dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ kasper_user }}"
+    group: "{{ kasper_group }}"
+    mode: "0755"
+  loop:
+    - "{{ kasper_app_root }}"
+    - "{{ kasper_app_dir }}"
+
+- name: Sync project files
+  ansible.builtin.copy:
+    src: "{{ kasper_src }}/"
+    dest: "{{ kasper_app_dir }}/"
+    owner: "{{ kasper_user }}"
+    group: "{{ kasper_group }}"
+    mode: preserve
+  notify: Restart kasper
+
+- name: Build container image with Podman (local registry namespace)
+  ansible.builtin.command: >-
+    podman build -t localhost/kasper:latest -f {{ kasper_app_dir }}/Containerfile {{ kasper_app_dir }}
+  args:
+    chdir: "{{ kasper_app_dir }}"
+
+- name: Create/Update container (quadlet via systemd unit will run it)
+  ansible.builtin.copy:
+    dest: "{{ kasper_app_dir }}/.built"
+    content: "built"
+    owner: "{{ kasper_user }}"
+    group: "{{ kasper_group }}"
+    mode: "0644"

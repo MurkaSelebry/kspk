@@ -1,0 +1,8 @@
+---
+- name: Deploy kasper (binary) to Rocky Linux
+  hosts: kasper_vm
+  become: true
+  vars:
+    kasper_deploy_method: binary
+  roles:
+    - role: kasper

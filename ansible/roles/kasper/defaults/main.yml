@@ -1,0 +1,24 @@
+---
+kasper_deploy_method: binary # binary | podman
+kasper_user: kasper
+kasper_group: kasper
+kasper_app_root: /opt/kasper
+kasper_app_dir: "{{ kasper_app_root }}/app"
+kasper_bin_dir: "/usr/local/bin"
+kasper_service_name: kasper
+kasper_listen_port: 8080
+kasper_env_file: /etc/sysconfig/kasper
+
+# App config
+kasper_thecatapi_key: ""
+kasper_host_type: "" # container|vm|physical or empty
+
+# Build (binary) config
+kasper_go_version: "1.23.5"
+# Map ansible_architecture to Go arch names
+kasper_go_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+  armv7l: armv7
+  armv6l: armv6
+kasper_src: "{{ playbook_dir | dirname | dirname }}" # repo root (two levels up from playbooks/)

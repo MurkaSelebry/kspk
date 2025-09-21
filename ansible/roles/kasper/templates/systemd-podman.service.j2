@@ -1,0 +1,15 @@
+[Unit]
+Description=Kasper microservice (podman)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=root
+Group=root
+ExecStart=/usr/bin/podman compose -f {{ kasper_app_dir }}/podman-compose.yml up --build
+ExecStop=/usr/bin/podman compose -f {{ kasper_app_dir }}/podman-compose.yml down
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

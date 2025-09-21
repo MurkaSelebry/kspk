@@ -1,0 +1,22 @@
+[Unit]
+Description=Kasper microservice (binary)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User={{ kasper_user }}
+Group={{ kasper_group }}
+EnvironmentFile={{ kasper_env_file }}
+WorkingDirectory={{ kasper_app_dir }}
+ExecStart={{ kasper_bin_dir }}/server
+Restart=always
+RestartSec=3
+AmbientCapabilities=
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateUsers=no
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,54 @@
+---
+- name: Ensure kasper group exists
+  ansible.builtin.group:
+    name: "{{ kasper_group }}"
+    system: true
+
+- name: Ensure kasper user exists
+  ansible.builtin.user:
+    name: "{{ kasper_user }}"
+    group: "{{ kasper_group }}"
+    system: true
+    create_home: false
+    shell: /sbin/nologin
+
+- name: Create app directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ kasper_user }}"
+    group: "{{ kasper_group }}"
+    mode: '0755'
+  loop:
+    - "{{ kasper_app_root }}"
+    - "{{ kasper_app_dir }}"
+    - "{{ kasper_bin_dir }}"
+
+- name: Place environment file
+  ansible.builtin.template:
+    src: env.sysconfig.j2
+    dest: "{{ kasper_env_file }}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart kasper
+
+- name: Include deploy method
+  ansible.builtin.include_tasks: "deploy_{{ kasper_deploy_method }}.yml"
+
+- name: Install systemd unit
+  ansible.builtin.template:
+    src: "systemd-{{ kasper_deploy_method }}.service.j2"
+    dest: "/etc/systemd/system/{{ kasper_service_name }}.service"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reload systemd
+
+- name: Enable and start service
+  ansible.builtin.systemd:
+    name: "{{ kasper_service_name }}"
+    enabled: true
+    state: started
+    daemon_reload: true
+
