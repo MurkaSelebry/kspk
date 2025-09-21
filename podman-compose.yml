@@ -1,4 +1,4 @@
-services:
+git addservices:
   kasper:
     build:
       context: .

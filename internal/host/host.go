@@ -28,9 +28,40 @@ func isContainer() bool {
 	if _, err := os.Stat("/.dockerenv"); err == nil {
 		return true
 	}
+	// Podman specific marker files
+	if _, err := os.Stat("/.containerenv"); err == nil {
+		return true
+	}
+	if _, err := os.Stat("/run/.containerenv"); err == nil {
+		return true
+	}
+	// Systemd hint when running inside a container
+	if b, err := os.ReadFile("/run/systemd/container"); err == nil {
+		ls := strings.ToLower(string(b))
+		if ls != "" && (strings.Contains(ls, "podman") || strings.Contains(ls, "docker") || strings.Contains(ls, "container")) {
+			return true
+		}
+	}
+	// cgroup markers (cgroup v1/v2)
 	if data, err := os.ReadFile("/proc/1/cgroup"); err == nil {
 		ls := strings.ToLower(string(data))
-		if strings.Contains(ls, "docker") || strings.Contains(ls, "kubepods") || strings.Contains(ls, "containerd") || strings.Contains(ls, "podman") {
+		if containsAny(ls, []string{"docker", "kubepods", "containerd", "podman", "libpod", "crio", "oci"}) {
+			return true
+		}
+	}
+	// Env variable often set by runtimes
+	if v := strings.ToLower(os.Getenv("container")); v != "" {
+		return true
+	}
+	if v := strings.ToLower(os.Getenv("CONTAINER")); v != "" { // some systems use upper-case
+		return true
+	}
+	return false
+}
+
+func containsAny(s string, subs []string) bool {
+	for _, sub := range subs {
+		if strings.Contains(s, sub) {
 			return true
 		}
 	}
