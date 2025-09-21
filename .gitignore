@@ -1,0 +1,20 @@
+# Build artifacts
+bin/
+*.out
+*.log
+
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+
+# Cache
+**/node_modules
+**/.cache
+
+# Go
+**/*.test
+
+#md
+*.md

@@ -1,0 +1,20 @@
+# Build artifacts
+bin/
+*.out
+*.log
+
+# VCS
+.git
+.gitignore
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+
+# Cache
+**/node_modules
+**/.cache
+
+# Go
+**/*.test

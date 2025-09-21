@@ -1,0 +1,13 @@
+services:
+  kasper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kasper:latest
+    container_name: kasper
+    environment:
+      - THECATAPI_KEY=${THECATAPI_KEY:-}
+      - HOST_TYPE=${HOST_TYPE:-}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
