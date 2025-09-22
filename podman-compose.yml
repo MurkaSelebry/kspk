@@ -3,9 +3,7 @@ services:
     build:
       context: .
       file: Containerfile
-      # Uncomment the next line if building on Apple Silicon and targeting arm64
-      # platforms:
-      #   - linux/arm64
+
     image: localhost/kasper:latest
     container_name: kasper
     ports:

@@ -3,6 +3,12 @@ terraform {
     proxmox = {
       source = "bpg/proxmox"
     }
+    tls = {
+      source = "hashicorp/tls"
+    }
+    local = {
+      source = "hashicorp/local"
+    }
   }
 }
 
@@ -13,9 +19,5 @@ provider "proxmox" {
   insecure = true
   ssh {
     agent = true
-  #   node {
-  #     address = "10.10.10.52"
-  #     name = "px02"
-  #   }
   }
 }
