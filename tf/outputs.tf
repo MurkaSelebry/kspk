@@ -5,7 +5,7 @@ output "vm_ip_address" {
 
 output "ssh_connection_command" {
   description = "Команда для подключения по SSH"
-  value       = "ssh -i ssh-keys/${var.vm_name}-private-key.pem selebry@${split("/", var.vm_ip_address)[0]}"
+  value       = "ssh -i ssh-keys/${var.vm_name}-private-key.pem root@${split("/", var.vm_ip_address)[0]}"
 }
 
 output "private_key_location" {
