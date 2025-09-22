@@ -55,7 +55,7 @@ resource "proxmox_virtual_environment_vm" "rocky9" {
     }
 
     user_account {
-      username = "selebry"
+      username = "root"
       password = "12345678"
       keys     = [trimspace(tls_private_key.vm_ssh_key.public_key_openssh)]
     }
