@@ -11,7 +11,7 @@ variable "vm_ip_address" {
 variable "vm_gateway" {
   description = "Gateway для VM"
   type        = string
-  default     = "192.168.206.1"
+  default     = "192.168.206.2"
 }
 
 variable "vm_name" {
