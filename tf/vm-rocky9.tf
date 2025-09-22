@@ -5,7 +5,7 @@ resource "proxmox_virtual_environment_vm" "rocky9" {
 
     # Node name has to be the same name as within the cluster
     # this might not include the FQDN
-    node_name = "pve"
+    node_name = "selebry"
 
     # The destination resource pool for the new VM
 
@@ -13,7 +13,7 @@ resource "proxmox_virtual_environment_vm" "rocky9" {
     clone {
       # ID of VM with "Rocky9-Template"
       vm_id = 2000
-      node_name = "pve"
+      node_name = "selebry"
     }
 
     # Activate QEMU agent for this VM

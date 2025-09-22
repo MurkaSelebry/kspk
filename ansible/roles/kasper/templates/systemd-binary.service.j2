@@ -4,8 +4,8 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-User={{ kasper_user }}
-Group={{ kasper_group }}
+User=root
+Group=root
 EnvironmentFile={{ kasper_env_file }}
 WorkingDirectory={{ kasper_app_dir }}
 ExecStart={{ kasper_bin_dir }}/server

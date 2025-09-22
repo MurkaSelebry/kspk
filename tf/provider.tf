@@ -7,7 +7,7 @@ terraform {
 }
 
 provider "proxmox" {
-  endpoint = "https://10.0.3.4:8006/"
+  endpoint = "https://192.168.206.134:8006/"
   username = "root@pam"
   password = "12345678"
   insecure = true
